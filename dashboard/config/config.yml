@@ -1,0 +1,60 @@
+---
+title: "NOOK VPN Dashboard"
+subtitle: "Mini PC Home Services"
+logo: "assets/logo.png"
+header: true
+footer: "<p>Created with ❤️</p>"
+
+# Optional theme customization
+theme: default
+colors:
+  light:
+    highlight-primary: "#3367d6"
+    highlight-secondary: "#4285f4"
+  dark:
+    highlight-primary: "#3367d6"
+    highlight-secondary: "#4285f4"
+
+# Services
+services:
+  - name: "Network"
+    icon: "fas fa-network-wired"
+    items:
+      - name: "WireGuard VPN"
+        logo: "assets/tools/wireguard.png"
+        subtitle: "Secure VPN Tunnel"
+        tag: "vpn"
+        url: "http://192.168.1.10:51820"
+        target: "_blank"
+      - name: "Pi-hole"
+        logo: "assets/tools/pihole.png"
+        subtitle: "Network-wide Ad Blocking"
+        tag: "dns"
+        url: "http://192.168.1.10:8080/admin"
+        target: "_blank"
+
+  - name: "Management"
+    icon: "fas fa-server"
+    items:
+      - name: "Portainer"
+        logo: "assets/tools/portainer.png"
+        subtitle: "Container Management"
+        tag: "management"
+        url: "http://192.168.1.10:9000"
+        target: "_blank"
+      - name: "Uptime Kuma"
+        logo: "assets/tools/uptime-kuma.png"
+        subtitle: "Service Monitoring"
+        tag: "monitoring"
+        url: "http://192.168.1.10:3001"
+        target: "_blank"
+
+  - name: "Automation"
+    icon: "fas fa-robot"
+    items:
+      - name: "n8n"
+        logo: "assets/tools/n8n.png"
+        subtitle: "Workflow Automation"
+        tag: "automation"
+        url: "http://192.168.1.10:5678"
+        target: "_blank"

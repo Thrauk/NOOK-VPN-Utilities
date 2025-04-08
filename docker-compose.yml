@@ -1,0 +1,114 @@
+version: '3'
+
+services:
+  # WireGuard VPN
+  wireguard:
+    container_name: wireguard
+    image: linuxserver/wireguard:latest
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Bucharest
+      - SERVERURL=auto
+      - SERVERPORT=51820
+      - PEERS=3
+      - PEERDNS=auto
+      - INTERNAL_SUBNET=10.13.13.0
+    volumes:
+      - ./wireguard/config:/config
+      - /lib/modules:/lib/modules
+    ports:
+      - 51820:51820/udp
+    restart: unless-stopped
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    networks:
+      - vpn_network
+
+  # Pi-hole for DNS level ad blocking
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "8080:80/tcp"
+    environment:
+      TZ: 'Europe/Bucharest'
+      WEBPASSWORD: 'pihole_password'  # Change this to a secure password
+      ServerIP: 192.168.1.10  # Change to your host IP
+    volumes:
+      - './pihole/etc-pihole:/etc/pihole'
+      - './pihole/etc-dnsmasq.d:/etc/dnsmasq.d'
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+    networks:
+      - vpn_network
+    depends_on:
+      - wireguard
+
+  # Portainer for container management
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce:latest
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./portainer/data:/data
+    restart: unless-stopped
+    networks:
+      - vpn_network
+      
+  # Uptime Kuma for monitoring services
+  uptime-kuma:
+    container_name: uptime-kuma
+    image: louislam/uptime-kuma:latest
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./uptime-kuma/data:/app/data
+    restart: unless-stopped
+    networks:
+      - vpn_network
+      
+  # Homer dashboard to access all services
+  homer:
+    container_name: homer
+    image: b4bz/homer:latest
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./dashboard/config:/www/assets/config
+    restart: unless-stopped
+    networks:
+      - vpn_network
+      
+  # n8n - Workflow automation tool
+  n8n:
+    container_name: n8n
+    image: n8nio/n8n:latest
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=changeme  # Change this to a secure password
+      - N8N_HOST=192.168.1.10  # Change to your host IP
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=production
+      - WEBHOOK_URL=http://192.168.1.10:5678/  # Change to your host IP or DNS
+    volumes:
+      - ./n8n/data:/home/node/.n8n
+    restart: unless-stopped
+    networks:
+      - vpn_network
+
+networks:
+  vpn_network:
+    driver: bridge 

@@ -1,0 +1,22 @@
+# Configuration and data directories
+wireguard/config/*
+pihole/etc-pihole/*
+pihole/etc-dnsmasq.d/*
+portainer/data/*
+uptime-kuma/data/*
+dashboard/config/assets
+n8n/data/*
+
+# Backups
+backups/
+
+# Logs
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Keep directory structure with .gitkeep
+!*/
+!.gitkeep 
